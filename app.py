@@ -1,16 +1,13 @@
-
-
 from flask import Flask, request, jsonify
 import hashlib
 import os
 from dotenv import load_dotenv
 
-# Load .env file
+# Load variables from .env
 load_dotenv()
 
 app = Flask(__name__)
 
-# Load sensitive values from .env
 VERIFICATION_TOKEN = os.getenv("VERIFICATION_TOKEN")
 ENDPOINT_URL = os.getenv("ENDPOINT_URL")
 
@@ -20,6 +17,7 @@ def verify():
     if not challenge_code:
         return "Missing challenge code", 400
 
+    # Hash: challengeCode + verificationToken + endpoint
     to_hash = challenge_code + VERIFICATION_TOKEN + ENDPOINT_URL
     hashed = hashlib.sha256(to_hash.encode("utf-8")).hexdigest()
 
@@ -29,9 +27,8 @@ def verify():
 def handle_notification():
     data = request.json
     print("Received notification:", data)
+    # Here you can add code to remove user data from your database
     return "", 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
-
